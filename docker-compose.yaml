@@ -1,0 +1,37 @@
+services:
+  azure-function:
+    build:
+      context: ./UserFunctionApp
+    image: user-function-app
+    container_name: azure-function
+    ports:
+      - "7071:80"               # Host:Container — for local dev
+    expose:
+      - "80"                    # Optional — internal visibility
+    healthcheck:
+      test: curl --fail http://localhost/api/GetUsers || exit 1
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  express-gateway:
+    build:
+      context: ./express-gateway
+    image: my-express-gateway
+    container_name: my-express-gateway
+    ports:
+      - "3000:3000"
+    depends_on:
+      azure-function:
+        condition: service_healthy
+
+  reverse-proxy:
+    image: nginx:latest
+    container_name: reverse-proxy
+    volumes:
+      - ./nginx/default.conf:/etc/nginx/conf.d/default.conf
+    ports:
+      - "8080:80"
+    depends_on:
+      - express-gateway
+      - azure-function
