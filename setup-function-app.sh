@@ -57,7 +57,7 @@ az functionapp cors add \
   --allowed-origins "http://localhost:4200"
 
 # ----- Output -----
-echo "\n✅ Deployment Complete"
+echo "\nDeployment Complete"
 echo "Function App: https://$FUNCTION_APP.azurewebsites.net"
 echo "Managed Identity: $IDENTITY_NAME"
 echo "Storage Account: $STORAGE_ACCOUNT"
